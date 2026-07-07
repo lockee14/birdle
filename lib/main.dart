@@ -52,29 +52,65 @@ class GuessInput extends StatelessWidget {
   }
 }
 
-class GamePage extends StatelessWidget {
+class GamePage extends StatefulWidget {
   GamePage({super.key});
   // This object is part of the game.dart file.
   // It manages wordle logic, and is outside the scope of this tutorial.
   final Game _game = Game();
 
   @override
+  State<GamePage> createState() => _GamePageState();
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   // TODO: Replace with screen contents
+  //   return Padding(
+  //     padding: const EdgeInsets.all(8.0),
+  //     child: Column(
+  //       spacing: 5.0,
+  //       children: [
+  //         // _game.guesses.map((g) => Row(spacing: 5.0, children: [],)).toList()
+  //         for (final guess in _game.guesses)
+  //           Row(
+  //             spacing: 5.0,
+  //             children: guess.map((g) => Tile(g.char, g.type)).toList(),
+  //           ),
+  //         GuessInput(onSubmitGuess: (guess) {print(guess);})
+  //       ]
+  //     )
+  //   );
+  // }
+}
+
+class _GamePageState extends State<GamePage> {
+  final Game _game = Game();
+  @override
   Widget build(BuildContext context) {
-    // TODO: Replace with screen contents
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        spacing: 5.0,
         children: [
-          // _game.guesses.map((g) => Row(spacing: 5.0, children: [],)).toList()
-          for (final guess in _game.guesses)
+          for (var guess in _game.guesses)
             Row(
-              spacing: 5.0,
-              children: guess.map((g) => Tile(g.char, g.type)).toList(),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (var letter in guess)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2.5),
+                    child: Tile(letter.char, letter.type),
+                  )
+              ],
             ),
-          GuessInput(onSubmitGuess: (guess) {print(guess);})
-        ]
-      )
+          GuessInput(
+            onSubmitGuess: (guess) {
+              print(guess);
+              setState(() {
+                _game.guess(guess);
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -87,7 +123,9 @@ class Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.bounceIn,
       width: 60,
       height: 60,
       decoration: BoxDecoration(
